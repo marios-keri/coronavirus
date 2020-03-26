@@ -1,6 +1,7 @@
 import sqlite3
 import scraper
 import datetime
+from matplotlib import pyplot as plt
 
 class Database:
     def __init__(self, db_location=None):
@@ -18,8 +19,8 @@ class Database:
     def create_table(self, country):
         self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS {country} (date VARCHAR UNIQUE, cases VARCHAR, deaths VARCHAR, recoverd VARCHAR)""")
 
-    def select(self, country, row):
-        data = self.cursor.execute(f"""SELECT {row} FROM {country}""")
+    def select(self, country, column):
+        data = self.cursor.execute(f"""SELECT {column} FROM {country}""")
         return data
 
     def commit(self):
@@ -44,8 +45,9 @@ if __name__ == '__main__':
     database.commit()
 
     country = input('country : ').capitalize()
-    row = input('cases, deaths, or recoverd : ').lower()
+    column = input('cases, deaths, or recoverd : ').lower()
 
-    data = database.select(country, row).fetchall()
+    data = database.select(country, column).fetchall()
 
     print(country, data)
+
