@@ -1,7 +1,7 @@
 import sqlite3
 import scraper
 import datetime
-from matplotlib import pyplot as plt
+
 
 class Database:
     def __init__(self, db_location=None):
