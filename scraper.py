@@ -34,7 +34,7 @@ class Wikipedia:
         self.total_cases = total_cases[1]
         self.total_recoverd = total_cases[3]
 
-        first_row = self.data_table.tbody.find_all('tr')[3:]
+        first_row = self.data_table.tbody.find_all('tr')[2:]
 
         for row in first_row:
             if len(row.text.split()) <=6:
@@ -82,13 +82,11 @@ class Wikipedia:
 
 if __name__ == '__main__':
     coronavirus = Wikipedia()
-
-    print(f'Total cases   : {coronavirus.total_cases}')
-    print(f'Total dead    : {coronavirus.total_deaths}')
-    print(f'Total recoverd: {coronavirus.total_recoverd}')
-
+    print()
+    print('Total global cases : ', coronavirus.total_cases)
+    print('Total global deatsh : ', coronavirus.total_deaths)
+    print('Total global revoverd : ', coronavirus.total_recoverd)
     print()
 
-    for i in coronavirus.table:
-        print(i)
-
+    for country in coronavirus.table:
+        print(country)
