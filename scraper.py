@@ -27,7 +27,7 @@ class Wikipedia:
         self._update()
 
     def _update(self):
-        total_cases = self.data_table.tbody.find_all('tr')[2]
+        total_cases = self.data_table.tbody.find_all('tr')[1]
         total_cases = total_cases.text.strip().split('\n\n')
 
         self.total_deaths = total_cases[2]
