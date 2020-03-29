@@ -20,7 +20,7 @@ class Database:
         self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS {country} (date VARCHAR UNIQUE, cases VARCHAR, deaths VARCHAR, recoverd VARCHAR)""")
 
     def select(self, country, column):
-        data = self.cursor.execute(f"""SELECT {column} FROM {country}""")
+        data = self.cursor.execute(f"""SELECT date, {column} FROM {country}""")
         return data
 
     def commit(self):
