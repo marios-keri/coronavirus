@@ -28,15 +28,18 @@ class Database:
 
 
 if __name__ == '__main__':
-    coronavirus = scraper.Wikipedia()
-    coronavirus_table = coronavirus.table
+    coronavirus_data = scraper.DataContainer()
+
+    data_scraper = scraper.DataPipe(coronavirus_data)
+
+    coronavirus_table = coronavirus_data.table
 
     database = Database('data.db')
 
-    for countries in coronavirus.countries:
+    for countries in coronavirus_data.countries:
         database.create_table(countries.strip())
 
-    for row in coronavirus.table:
+    for row in coronavirus_data.table:
         today = str(datetime.datetime.today())
         today = today.split(' ')[0]
 

@@ -2,8 +2,18 @@ import requests
 from bs4 import BeautifulSoup as bs
 
 
-class Wikipedia:
+class DataContainer:
     def __init__(self):
+        self.countries = []
+        self.no_countries_infected = 0
+        self.total_cases = 0
+        self.total_recoverd = 0
+        self.total_deaths = 0
+        self.table = []
+
+
+class DataPipe:
+    def __init__(self, container):
         URL = 'https://en.wikipedia.org/wiki/2019%E2%80%9320_coronavirus_pandemic_by_country_and_territory'
 
         try:
@@ -13,16 +23,12 @@ class Wikipedia:
 
         assert RESPONSE.ok, f'Response from requests is not ok {RESPONSE.STATUS_CODE}'
 
+        self.container = container
+
         self.soup = bs(RESPONSE.content, 'html5lib')
         self.data_table = self.soup.find('div', {'id': 'covid19-container'})
 
-        self.countries = []
-        self.no_countries_infected = 0
-        self.total_deaths = 0
-        self.total_recoverd = 0
-        self.total_cases = 0
         self.table_data = []
-        self.table = []
 
         self._update()
 
@@ -30,9 +36,9 @@ class Wikipedia:
         total_cases = self.data_table.tbody.find_all('tr')[1]
         total_cases = total_cases.text.strip().split('\n\n')
 
-        self.total_deaths = total_cases[2]
-        self.total_cases = total_cases[1]
-        self.total_recoverd = total_cases[3]
+        self.container.total_deaths = total_cases[2]
+        self.container.total_cases = total_cases[1]
+        self.container.total_recoverd = total_cases[3]
 
         first_row = self.data_table.tbody.find_all('tr')[2:]
 
@@ -57,36 +63,39 @@ class Wikipedia:
                 clean_row = []
 
                 if '(' in country:
-                    self.countries.append(country[: country.find('(')].strip())
+                    self.container.countries.append(country[: country.find('(')].strip())
                     clean_row.append(country[: country.find('(')])
                     clean_row.append(cases.replace(',', '.'))
                     clean_row.append(dead.replace(',', '.'))
                     clean_row.append(recover.replace(',', '.'))
-                    self.table.append(clean_row)
+                    self.container.table.append(clean_row)
 
                 elif '[' in country:
-                    self.countries.append(country[: country.find('[')].strip())
+                    self.container.countries.append(country[: country.find('[')].strip())
                     clean_row.append(country[: country.find('[')].strip())
                     clean_row.append(cases.replace(',', '.'))
                     clean_row.append(dead.replace(',', '.'))
                     clean_row.append(recover.replace(',', '.'))
-                    self.table.append(clean_row)
+                    self.container.table.append(clean_row)
 
                 else:
-                    self.countries.append(country.strip())
+                    self.container.countries.append(country.strip())
                     clean_row.append(country.strip())
                     clean_row.append(cases.replace(',', '.'))
                     clean_row.append(dead.replace(',', '.'))
                     clean_row.append(recover.replace(',', '.'))
-                    self.table.append(clean_row)
+                    self.container.table.append(clean_row)
 
 if __name__ == '__main__':
-    coronavirus = Wikipedia()
+    coronavirus_data = DataContainer()
+
+    data = DataPipe(coronavirus_data)
+
     print()
-    print('Total global cases : ', coronavirus.total_cases)
-    print('Total global deatsh : ', coronavirus.total_deaths)
-    print('Total global revoverd : ', coronavirus.total_recoverd)
+    print('Total global cases : ', coronavirus_data.total_cases)
+    print('Total global deatsh : ', coronavirus_data.total_deaths)
+    print('Total global revoverd : ', coronavirus_data.total_recoverd)
     print()
 
-    for country in coronavirus.table:
+    for country in coronavirus_data.table:
         print(country)
